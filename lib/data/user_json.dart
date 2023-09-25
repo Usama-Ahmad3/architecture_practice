@@ -1,5 +1,4 @@
-
-import '../../domain/entity/users.dart';
+import 'package:architecture_practice/domain/entities/user.dart';
 
 class UserJson {
   final int id;
@@ -24,7 +23,7 @@ class UserJson {
         website: json['website'],
         phone: json['phone'],
       );
-  Users toDomain() => Users(
+  User toDomain() => User(
       id: id,
       name: name,
       email: email,

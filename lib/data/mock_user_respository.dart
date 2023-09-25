@@ -1,18 +1,18 @@
-import 'package:architecture_practice/domain/respository/user_repository.dart';
-import 'package:architecture_practice/data/models/user_json.dart';
+import 'package:architecture_practice/domain/entities/user.dart';
+import 'package:architecture_practice/domain/user_repository/user_repository.dart';
+import 'package:dartz/dartz.dart';
 
-import '../domain/entity/users.dart';
+import '../domain/entities/user_list_failure.dart';
 
 class MockUserRepository implements UserRepository {
   @override
-  Future<List<Users>> getUsers() async => [
-        UserJson(
-                id: 123,
-                name: 'name',
-                email: 'email',
-                userName: 'userName',
-                website: 'website',
-                phone: 'phone')
-            .toDomain()
-      ];
+  Future<Either<UserListFailure, List<User>>> getUser() async => right([
+        const User(
+            id: 123,
+            name: 'name',
+            email: 'email',
+            userName: 'userName',
+            website: 'website',
+            phone: 'phone')
+      ]);
 }

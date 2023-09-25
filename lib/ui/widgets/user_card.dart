@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../domain/entity/users.dart';
+import '../../domain/entities/user.dart';
 
 class UserCard extends StatelessWidget {
-  final Users user;
-  const UserCard({super.key, required this.user});
+  User user;
+  final VoidCallback? onTap;
+  UserCard({super.key, required this.user,this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +15,7 @@ class UserCard extends StatelessWidget {
       decoration: BoxDecoration(
           color: Colors.grey.shade200, borderRadius: BorderRadius.circular(10)),
       child: ListTile(
+        onTap: onTap,
         title: Text(user.name),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

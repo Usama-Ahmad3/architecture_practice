@@ -1,23 +1,34 @@
-import 'package:architecture_practice/ui/user_list_page.dart';
-import 'package:architecture_practice/ui/user_list_provider.dart';
-import 'package:architecture_practice/data/user_repository.dart';
+import 'package:architecture_practice/app_navigation/app_navigation_layer.dart';
+import 'package:architecture_practice/domain/user_repository/user_repository.dart';
+import 'package:architecture_practice/network/network_repository.dart';
+import 'package:architecture_practice/ui/user_detail/user_detail_cubit.dart';
+import 'package:architecture_practice/ui/user_detail/user_detail_initial_param.dart';
+import 'package:architecture_practice/ui/user_list/user_list_initial_params.dart';
+import 'package:architecture_practice/ui/user_list/user_list_navigator.dart';
+import 'package:architecture_practice/ui/user_list/user_list_qubit.dart';
+import 'package:architecture_practice/data/rest_api_user_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:provider/provider.dart';
+import 'ui/user_list/user_list_page.dart';
 
-import 'domain/respository/user_repository.dart';
-
-GetIt getIt = GetIt.instance;
+final getIt = GetIt.instance;
 void main() {
-  getIt.registerLazySingleton<UserRepository>(() => RestApiUserRepository());
+  getIt.registerSingleton<NetworkRepository>(NetworkRepository());
+  getIt.registerSingleton<UserRepository>(
+      RestApiUserRepository(networkRepository: getIt()));
+  getIt.registerSingleton<AppNavigation>(AppNavigation());
+  getIt.registerSingleton<UserListNavigator>(
+      UserListNavigator(navigation: getIt()));
+  getIt.registerFactoryParam<UserListCubit, UserListInitialParams, dynamic>(
+      (param, _) => UserListCubit(
+          userListInitialParam: param,
+          userRepository: getIt(),
+          userListNavigator: getIt())
+        ..fetchUser());
+  getIt.registerFactoryParam<UserDetailCubit, UserDetailInitialParams, dynamic>(
+      (param, param2) => UserDetailCubit(userDetailInitialParams: param));
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-            create: (_) => UserListProvider(userRepository: getIt())..getUser())
-      ],
-      child: const MyApp(),
-    ),
+    const MyApp(),
   );
 }
 
@@ -31,7 +42,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const UserListPage(),
+      home: UserListPage(cubit: getIt(param1: UserListInitialParams())),
     );
   }
 }
